@@ -1,0 +1,53 @@
+--- chatservers/redent.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/typedecoded.py	2014-06-03 15:59:45.000000000 -0500
+@@ -1,3 +1,21 @@
++class UnknownMap(dict):
++    def __getattr__(self, k):
++        return self[k]
++
++    def u(self, *a):  # ** REMOVEME!!!
++        return self.__setitem__(*a)  # ** REMOVEME!!!
++
++    def __setattr__(self, k, v):
++        return self.__setitem__(k, v)
++
++    @property
++    def s(self):
++        class InnerUnknown(object):
++            def __getitem__(innerself, k):
++                return reduce(getattr, k.split('.'), self)
++        return InnerUnknown()
++
++
+ main = lambda port: (
+     lambda dt: (
+         lambda mm: (
+@@ -311,27 +329,4 @@
+             'GFzIGxlZnQufn5+KiAlcyAlc35+fjwlcz4gJXM='
+         )
+     )
+-)(
+-    type(
+-        '',
+-        (dict,),
+-        dict(
+-            __getattr__=lambda s, k:  s[k],
+-            u=lambda s, *a:  s.__setitem__(*a),
+-            __setattr__=lambda s, k, v: s.__setitem__(k, v),
+-            s=property(
+-                lambda s: type(
+-                    '',
+-                    (object,),
+-                    dict(
+-                        __getitem__=lambda ss, k: reduce(
+-                            getattr,
+-                            k.split('.'),
+-                            s
+-                        )
+-                    )
+-                )()
+-            )
+-        )
+-    )
+-)
++)(UnknownMap)

@@ -1,0 +1,185 @@
+--- chatservers/replace_main_store.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/replace_main_store_2.py	2014-06-03 15:59:45.000000000 -0500
+@@ -16,22 +16,6 @@
+         return InnerUnknown()
+ 
+ 
+-# Used to be called "mm"
+-main_store = UnknownMap(
+-    l='KioqIFNlcnZlciBnb2luZyBkb3duIX5+fioqKiBDdXJyZW50bHkgY29ubmVjdGV'
+-    'kOiB+fn4qKiogQXZhaWxhYmxlIGNvbW1hbmRzOg0KKioqICAvaGVscCAtLSBnZXQg'
+-    'aGVscA0KKioqICAvcXVpdCAtLSBkaXNjb25uZWN0DQoqKiogIC9tZSAtLSBwZXJmb'
+-    '3JtIGFuIGFjdGlvbg0KKioqICAvd2hvIC0tIGxpc3QgY29ubmVjdGVkIHVzZXJzDQ'
+-    'oqKiogIC9uaWNrIC0tIGNoYW5nZSB5b3VyIG5pY2tuYW1lIHRvIHNvbWV0aGluZyB'
+-    'iZXR0ZXJ+fn4qKiogJXMgaXMgbm93IGtub3duIGFzICVzLn5+fioqKiBUaGF0IG5p'
+-    'Y2tuYW1lIGlzIGludmFsaWQufn5+KioqIFR5cGUgIi9oZWxwIiBmb3IgaGVscC5+f'
+-    'n4qKiogSGVsbG8hIFdoYXQgaXMgeW91ciBuaWNrbmFtZT9+fn4qKiogVGhhdCBuaW'
+-    'NrbmFtZSBpcyBhbHJlYWR5IGluIHVzZS5+fn4qKiogSW5jb21pbmcgY29ubmVjdGl'
+-    'vbiF+fn4qKiogTm8gc3VjaCBjb21tYW5kOiAvJXN+fn4qKiogJXMgaGFzIGpvaW5l'
+-    'ZC5+fn5eLyhbQS16XSopXHMqKC4qKSR+fn5eW0EtejAtOV9dKyR+fn4qKiogJXMga'
+-    'GFzIGxlZnQufn5+KiAlcyAlc35+fjwlcz4gJXM='
+-)
+-
+ # Was called "n"
+ namespace = UnknownMap()
+ 
+@@ -47,6 +31,31 @@
+     're'
+ ]
+ 
++MESSAGES_ETC = [
++    '*** Server going down!',
++    '*** Currently connected: ',
++    (
++        '*** Available commands:\r\n'
++        '***  /help -- get help\r\n'
++        '***  /quit -- disconnect\r\n'
++        '***  /me -- perform an action\r\n'
++        '***  /who -- list connected users\r\n'
++        '***  /nick -- change your nickname to something better'
++    ),
++    '*** %s is now known as %s.',
++    '*** That nickname is invalid.',
++    '*** Type "/help" for help.',
++    '*** Hello! What is your nickname?',
++    '*** That nickname is already in use.',
++    '*** Incoming connection!',
++    '*** No such command: /%s',
++    '*** %s has joined.',
++    '^/([A-z]*)\\s*(.*)$',
++    '^[A-z0-9_]+$',
++    '*** %s has left.',
++    '* %s %s',
++    '<%s> %s'
++]
+ 
+ main = lambda port: (
+                 map(
+@@ -76,16 +85,13 @@
+                                     namespace.s['sys.exit']()
+                                     if namespace.f
+                                     else (
+-                                        [namespace.sa(main_store.l[0], namespace.o)] and
++                                        [namespace.sa(MESSAGES_ETC[0], namespace.o)] and
+                                         namespace.u('f', True) or
+                                         namespace.fc(namespace.l)
+                                     )
+                                 )
+                             ] * 2
+                         ),
+-                        lambda: setattr(
+-                            main_store, 'l', main_store.l.decode('base64').split('~~~')
+-                        ),
+                         lambda: (
+                             'sw',
+                             namespace.s['types.Functio' 'nType'](
+@@ -117,29 +123,29 @@
+                         lambda: namespace.update(
+                             si=(lambda o: o.__setitem__),
+                             di=(lambda o: o.__delitem__),
+-                            cr=namespace.s['re.compile'](main_store.l[11]),
++                            cr=namespace.s['re.compile'](MESSAGES_ETC[11]),
+                             nn={},
+                             dp=lambda s, d, c, l: namespace.dd.get(c, d)(s, l, c),
+                             dd=dict(
+                                 me=lambda s, l, c: (
+-                                    namespace.sa(main_store.l[14] % (namespace.nn[s], l))
++                                    namespace.sa(MESSAGES_ETC[14] % (namespace.nn[s], l))
+                                 ),
+                                 quit=lambda s, l, c: namespace.c(s),
+                                 who=lambda s, l, c: namespace.ws(
+-                                    s, main_store.l[1] + ', '.join(namespace.s['nn.values']())
++                                    s, MESSAGES_ETC[1] + ', '.join(namespace.s['nn.values']())
+                                 ),
+-                                help=lambda s, l, c: namespace.ws(s, main_store.l[2]),
++                                help=lambda s, l, c: namespace.ws(s, MESSAGES_ETC[2]),
+                                 nick=lambda s, l, c: (
+                                     (
+                                         (
+-                                            [namespace.sa(main_store.l[3] % (namespace.nn[s], l))] and
++                                            [namespace.sa(MESSAGES_ETC[3] % (namespace.nn[s], l))] and
+                                             namespace.si(namespace.nn)(s, l)
+                                         )
+                                         if namespace.nr.match(l)
+-                                        else namespace.ws(s, main_store.l[4])
++                                        else namespace.ws(s, MESSAGES_ETC[4])
+                                     )
+                                     if l not in namespace.nn.values()
+-                                    else namespace.ws(s, main_store.l[7])
++                                    else namespace.ws(s, MESSAGES_ETC[7])
+                                 )
+                             ),
+                             so=(namespace.u('f', False) or [namespace.l]),
+@@ -148,7 +154,7 @@
+                             o=(lambda: filter(lambda s:  s is not namespace.l, namespace.so)),
+                             w=(lambda: filter(namespace.ob.__getitem__, namespace.o())),
+                             ws=(lambda s, l: namespace.ob[s].append(l + '\r\n')),
+-                            nr=namespace.s['re.compile'](main_store.l[12]),
++                            nr=namespace.s['re.compile'](MESSAGES_ETC[12]),
+                             sa=(
+                                 lambda d, f=namespace.ro: map(
+                                     lambda s: namespace.ws(s, d),
+@@ -158,7 +164,7 @@
+                             fs=set(),
+                             c=(
+                                 lambda s: [
+-                                    namespace.sa(main_store.l[13] % namespace.nn[s])
++                                    namespace.sa(MESSAGES_ETC[13] % namespace.nn[s])
+                                     if s in namespace.nn and s not in namespace.fs
+                                     else None
+                                 ] and namespace.s['fs.add'](s)
+@@ -188,7 +194,7 @@
+                                                     apply,
+                                                     [
+                                                         lambda: (
+-                                                            namespace.sa(main_store.l[8])
++                                                            namespace.sa(MESSAGES_ETC[8])
+                                                         ),
+                                                         lambda: (
+                                                             namespace.so.append(
+@@ -197,7 +203,7 @@
+                                                         ),
+                                                         lambda: namespace.ws(
+                                                             namespace.so[-1],
+-                                                            main_store.l[6]
++                                                            MESSAGES_ETC[6]
+                                                         )
+                                                     ]
+                                                 ) if s is namespace.l else map(
+@@ -263,7 +269,7 @@
+                                         lambda (s, l): (
+                                             (
+                                                 namespace.sa(
+-                                                    main_store.l[15] % (
++                                                    MESSAGES_ETC[15] % (
+                                                         namespace.nn[s],
+                                                         l[1:]
+                                                         if l.startswith('//')
+@@ -280,7 +286,7 @@
+                                                         lambda s, l, c: (
+                                                             namespace.ws(
+                                                                 s,
+-                                                                main_store.l[9] % c
++                                                                MESSAGES_ETC[9] % c
+                                                             )
+                                                         ),
+                                                         *namespace.s['cr.match'](
+@@ -294,14 +300,14 @@
+                                                 (
+                                                     (
+                                                         namespace.si(namespace.nn)(s, l) or
+-                                                        [namespace.ws(s, main_store.l[5])] and
+-                                                        namespace.sa(main_store.l[10] % l)
++                                                        [namespace.ws(s, MESSAGES_ETC[5])] and
++                                                        namespace.sa(MESSAGES_ETC[10] % l)
+                                                     )
+                                                     if namespace.nr.match(l)
+-                                                    else namespace.ws(s, main_store.l[4])
++                                                    else namespace.ws(s, MESSAGES_ETC[4])
+                                                 )
+                                                 if l not in namespace.nn.values()
+-                                                else namespace.ws(s, main_store.l[7])
++                                                else namespace.ws(s, MESSAGES_ETC[7])
+                                             )
+                                         ),
+                                         [

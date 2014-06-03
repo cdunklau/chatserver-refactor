@@ -1,0 +1,387 @@
+--- chatservers/typedecoded_3.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/typedecoded_4.py	2014-06-03 15:59:45.000000000 -0500
+@@ -34,13 +34,15 @@
+     'GFzIGxlZnQufn5+KiAlcyAlc35+fjwlcz4gJXM='
+ )
+ 
++# Was called "n"
++namespace = UnknownMap()
++
+ 
+ main = lambda port: (
+-            lambda n: (
+                 map(
+                     lambda r:  (
+                         lambda rr: (
+-                            setattr(n, *rr)
++                            setattr(namespace, *rr)
+                             if (type(rr) is tuple and len(rr) == 2)
+                             else None
+                         )
+@@ -50,23 +52,23 @@
+                             setattr,
+                             *zip(
+                                 *[
+-                                    (n, m, __import__(m))
++                                    (namespace, m, __import__(m))
+                                     for m
+                                     in main_store.m.decode('ba' 'se64').split()
+                                 ]
+                             )
+                         ),
+                         lambda: map(
+-                            n.s['signal.signal'],
+-                            (n.s['signal.SIGINT'], n.s['signal.SIGTERM']),
++                            namespace.s['signal.signal'],
++                            (namespace.s['signal.SIGINT'], namespace.s['signal.SIGTERM']),
+                             [
+                                 lambda s, f: (
+-                                    n.s['sys.exit']()
+-                                    if n.f
++                                    namespace.s['sys.exit']()
++                                    if namespace.f
+                                     else (
+-                                        [n.sa(main_store.l[0], n.o)] and
+-                                        n.u('f', True) or
+-                                        n.fc(n.l)
++                                        [namespace.sa(main_store.l[0], namespace.o)] and
++                                        namespace.u('f', True) or
++                                        namespace.fc(namespace.l)
+                                     )
+                                 )
+                             ] * 2
+@@ -76,89 +78,89 @@
+                         ),
+                         lambda: (
+                             'sw',
+-                            n.s['types.Functio' 'nType'](
++                            namespace.s['types.Functio' 'nType'](
+                                 compile(
+                                     "try:\n"
+-                                    "\tv = n.select.select(n.so, n.w(), [])\n"
+-                                    "except n.select.error, e:\n"
+-                                    "\tif e[0] != n.errno.EINTR: raise\n"
++                                    "\tv = namespace.select.select(namespace.so, namespace.w(), [])\n"
++                                    "except namespace.select.error, e:\n"
++                                    "\tif e[0] != namespace.errno.EINTR: raise\n"
+                                     "else:\n"
+-                                    "\tn.u('sr', v)",
++                                    "\tnamespace.u('sr', v)",
+                                     '',
+                                     'exec'
+                                 ),
+-                                dict(n=n, OSError=OSError)
++                                dict(namespace=namespace, OSError=OSError)
+                             )
+                         ),
+                         lambda: (
+                             'l',
+-                            n.s['socket.socket'](
+-                                n.s['socket.AF_INET'],
+-                                n.s['socket.SOCK_STREAM']
++                            namespace.s['socket.socket'](
++                                namespace.s['socket.AF_INET'],
++                                namespace.s['socket.SOCK_STREAM']
+                             )
+                         ),
+-                        lambda: n.s['l.bind'](('', port)),
+-                        lambda: n.s['l.listen'](5),
++                        lambda: namespace.s['l.bind'](('', port)),
++                        lambda: namespace.s['l.listen'](5),
+                         lambda: (
+-                            'ro', lambda: filter(lambda s: s in n.nn,  n.so)
++                            'ro', lambda: filter(lambda s: s in namespace.nn,  namespace.so)
+                         ),
+-                        lambda: n.update(
++                        lambda: namespace.update(
+                             si=(lambda o: o.__setitem__),
+                             di=(lambda o: o.__delitem__),
+-                            cr=n.s['re.compile'](main_store.l[11]),
++                            cr=namespace.s['re.compile'](main_store.l[11]),
+                             nn={},
+-                            dp=lambda s, d, c, l: n.dd.get(c, d)(s, l, c),
++                            dp=lambda s, d, c, l: namespace.dd.get(c, d)(s, l, c),
+                             dd=dict(
+                                 me=lambda s, l, c: (
+-                                    n.sa(main_store.l[14] % (n.nn[s], l))
++                                    namespace.sa(main_store.l[14] % (namespace.nn[s], l))
+                                 ),
+-                                quit=lambda s, l, c: n.c(s),
+-                                who=lambda s, l, c: n.ws(
+-                                    s, main_store.l[1] + ', '.join(n.s['nn.values']())
++                                quit=lambda s, l, c: namespace.c(s),
++                                who=lambda s, l, c: namespace.ws(
++                                    s, main_store.l[1] + ', '.join(namespace.s['nn.values']())
+                                 ),
+-                                help=lambda s, l, c: n.ws(s, main_store.l[2]),
++                                help=lambda s, l, c: namespace.ws(s, main_store.l[2]),
+                                 nick=lambda s, l, c: (
+                                     (
+                                         (
+-                                            [n.sa(main_store.l[3] % (n.nn[s], l))] and
+-                                            n.si(n.nn)(s, l)
++                                            [namespace.sa(main_store.l[3] % (namespace.nn[s], l))] and
++                                            namespace.si(namespace.nn)(s, l)
+                                         )
+-                                        if n.nr.match(l)
+-                                        else n.ws(s, main_store.l[4])
++                                        if namespace.nr.match(l)
++                                        else namespace.ws(s, main_store.l[4])
+                                     )
+-                                    if l not in n.nn.values()
+-                                    else n.ws(s, main_store.l[7])
++                                    if l not in namespace.nn.values()
++                                    else namespace.ws(s, main_store.l[7])
+                                 )
+                             ),
+-                            so=(n.u('f', False) or [n.l]),
+-                            ib=n.s['collections' '.defaultdict'](list),
+-                            ob=n.s['collections.defaultdict'](list),
+-                            o=(lambda: filter(lambda s:  s is not n.l, n.so)),
+-                            w=(lambda: filter(n.ob.__getitem__, n.o())),
+-                            ws=(lambda s, l: n.ob[s].append(l + '\r\n')),
+-                            nr=n.s['re.compile'](main_store.l[12]),
++                            so=(namespace.u('f', False) or [namespace.l]),
++                            ib=namespace.s['collections' '.defaultdict'](list),
++                            ob=namespace.s['collections.defaultdict'](list),
++                            o=(lambda: filter(lambda s:  s is not namespace.l, namespace.so)),
++                            w=(lambda: filter(namespace.ob.__getitem__, namespace.o())),
++                            ws=(lambda s, l: namespace.ob[s].append(l + '\r\n')),
++                            nr=namespace.s['re.compile'](main_store.l[12]),
+                             sa=(
+-                                lambda d, f=n.ro: map(
+-                                    lambda s: n.ws(s, d),
++                                lambda d, f=namespace.ro: map(
++                                    lambda s: namespace.ws(s, d),
+                                     f()
+                                 )
+                             ),
+                             fs=set(),
+                             c=(
+                                 lambda s: [
+-                                    n.sa(main_store.l[13] % n.nn[s])
+-                                    if s in n.nn and s not in n.fs
++                                    namespace.sa(main_store.l[13] % namespace.nn[s])
++                                    if s in namespace.nn and s not in namespace.fs
+                                     else None
+-                                ] and n.s['fs.add'](s)
++                                ] and namespace.s['fs.add'](s)
+                             ),
+                             fc=(
+                                 lambda s: (
+                                     [s.close()] and
+-                                    (n.so.remove(s) if s in n.so else None) or
+-                                    (n.fs.remove(s) if s in n.fs else None) or
+-                                    (n.di(n.ib)(s) if s in n.ib else None) or
+-                                    (n.di(n.ob)(s) if s in n.ob else None) or
+-                                    (n.di(n.nn)(s) if s in n.nn else None)
++                                    (namespace.so.remove(s) if s in namespace.so else None) or
++                                    (namespace.fs.remove(s) if s in namespace.fs else None) or
++                                    (namespace.di(namespace.ib)(s) if s in namespace.ib else None) or
++                                    (namespace.di(namespace.ob)(s) if s in namespace.ob else None) or
++                                    (namespace.di(namespace.nn)(s) if s in namespace.nn else None)
+                                 )
+                             )
+                         ),
+@@ -166,8 +168,8 @@
+                             lambda f:  map(
+                                 apply,
+                                 [
+-                                    lambda: n.u('sr', ([], [], [])),
+-                                    lambda: n.sw(),
++                                    lambda: namespace.u('sr', ([], [], [])),
++                                    lambda: namespace.sw(),
+                                     lambda: map(
+                                         apply,
+                                         [
+@@ -176,29 +178,29 @@
+                                                     apply,
+                                                     [
+                                                         lambda: (
+-                                                            n.sa(main_store.l[8])
++                                                            namespace.sa(main_store.l[8])
+                                                         ),
+                                                         lambda: (
+-                                                            n.so.append(
++                                                            namespace.so.append(
+                                                                 s.accept()[0]
+                                                             )
+                                                         ),
+-                                                        lambda: n.ws(
+-                                                            n.so[-1],
++                                                        lambda: namespace.ws(
++                                                            namespace.so[-1],
+                                                             main_store.l[6]
+                                                         )
+                                                     ]
+-                                                ) if s is n.l else map(
++                                                ) if s is namespace.l else map(
+                                                     apply,
+                                                     [
+                                                         lambda: (
+-                                                            n.ib[s].append(
++                                                            namespace.ib[s].append(
+                                                                 s.recv(4096)
+                                                             ) or
+                                                             (
+-                                                                n.c(s)
++                                                                namespace.c(s)
+                                                                 if (
+-                                                                    n.ib[s][-1]
++                                                                    namespace.ib[s][-1]
+                                                                     == ''
+                                                                 )
+                                                                 else None
+@@ -211,48 +213,48 @@
+                                             lambda *ss: map(
+                                                 lambda s: (
+                                                     lambda d: (
+-                                                        n.si(n.ob)(
++                                                        namespace.si(namespace.ob)(
+                                                             s,
+                                                             [d[s.send(d):]]
+                                                         ) or
+                                                         (
+-                                                            n.si(n.ob)(s, [])
+-                                                            if n.ob[s] == ['']
++                                                            namespace.si(namespace.ob)(s, [])
++                                                            if namespace.ob[s] == ['']
+                                                             else None
+                                                         )
+                                                     )
+-                                                )(''.  join(n.ob[s])), ss),
++                                                )(''.  join(namespace.ob[s])), ss),
+                                             lambda *ss: None
+                                         ],
+-                                        n.sr
++                                        namespace.sr
+                                     ),
+                                     lambda: [
+-                                        n.di(v)(slice(None, None))
++                                        namespace.di(v)(slice(None, None))
+                                         for k, v
+-                                        in n.ob.items()
++                                        in namespace.ob.items()
+                                         if v and not filter(None, v)
+                                     ],
+-                                    lambda: n.u('sl', {}),
++                                    lambda: namespace.u('sl', {}),
+                                     lambda: map(
+                                         (
+                                             lambda (k, v): (
+-                                                n.si(n.sl)(
++                                                namespace.si(namespace.sl)(
+                                                     k,
+                                                     ''.join(v).split('\r\n')
+-                                                ) or n.si(n.ib)(
++                                                ) or namespace.si(namespace.ib)(
+                                                     k,
+-                                                    [n.sl[k].pop()]
++                                                    [namespace.sl[k].pop()]
+                                                 )
+                                             )
+                                         ),
+-                                        n.ib.items()
++                                        namespace.ib.items()
+                                     ),
+-                                    lambda: n.sl and map(
++                                    lambda: namespace.sl and map(
+                                         lambda (s, l): (
+                                             (
+-                                                n.sa(
++                                                namespace.sa(
+                                                     main_store.l[15] % (
+-                                                        n.nn[s],
++                                                        namespace.nn[s],
+                                                         l[1:]
+                                                         if l.startswith('//')
+                                                         else l
+@@ -263,68 +265,67 @@
+                                                     l.startswith('//')
+                                                 )
+                                                 else (
+-                                                    n.dp(
++                                                    namespace.dp(
+                                                         s,
+                                                         lambda s, l, c: (
+-                                                            n.ws(
++                                                            namespace.ws(
+                                                                 s,
+                                                                 main_store.l[9] % c
+                                                             )
+                                                         ),
+-                                                        *n.s['cr.match'](
++                                                        *namespace.s['cr.match'](
+                                                             l
+                                                         ).groups()
+                                                     )
+                                                 )
+                                             )
+-                                            if s in n.nn
++                                            if s in namespace.nn
+                                             else (
+                                                 (
+                                                     (
+-                                                        n.si(n.nn)(s, l) or
+-                                                        [n.ws(s, main_store.l[5])] and
+-                                                        n.sa(main_store.l[10] % l)
++                                                        namespace.si(namespace.nn)(s, l) or
++                                                        [namespace.ws(s, main_store.l[5])] and
++                                                        namespace.sa(main_store.l[10] % l)
+                                                     )
+-                                                    if n.nr.match(l)
+-                                                    else n.ws(s, main_store.l[4])
++                                                    if namespace.nr.match(l)
++                                                    else namespace.ws(s, main_store.l[4])
+                                                 )
+-                                                if l not in n.nn.values()
+-                                                else n.ws(s, main_store.l[7])
++                                                if l not in namespace.nn.values()
++                                                else namespace.ws(s, main_store.l[7])
+                                             )
+                                         ),
+                                         [
+                                             (s, l.rstrip())
+                                             for s, ll
+-                                            in n.sl.items()
++                                            in namespace.sl.items()
+                                             for l
+                                             in ll
+                                         ]
+                                     ),
+                                     lambda: (
+-                                        n.f and
++                                        namespace.f and
+                                         map(
+                                             lambda (s, b): (
+-                                                n.fc(s)
++                                                namespace.fc(s)
+                                                 if not filter(None, b)
+                                                 else None
+                                             ),
+-                                            n.ob.items()
++                                            namespace.ob.items()
+                                         )
+                                     ),
+                                     lambda: map(
+                                         lambda s: (
+-                                            n.fc(s)
+-                                            if not filter(None,  n.ob[s])
++                                            namespace.fc(s)
++                                            if not filter(None,  namespace.ob[s])
+                                             else None
+                                         ),
+-                                        list(n.fs)
++                                        list(namespace.fs)
+                                     )
+                                 ]
+                             ),
+-                            iter(lambda: bool(n.so), False)
++                            iter(lambda: bool(namespace.so), False)
+                         ),
+-                        lambda: n.s['l.' 'close']()
++                        lambda: namespace.s['l.' 'close']()
+                     ]
+                 )
+             )
+-        )(UnknownMap())

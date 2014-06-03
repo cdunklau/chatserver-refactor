@@ -1,0 +1,39 @@
+--- chatservers/typedecoded_4.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/replace_main_store.py	2014-06-03 15:59:45.000000000 -0500
+@@ -18,8 +18,6 @@
+ 
+ # Used to be called "mm"
+ main_store = UnknownMap(
+-    m='c3lzIHNpZ25hbCBzb2NrZXQgc2VsZWN0IGNvbGxlY3Rpb25zIGVycm5vIHR5cGV'
+-    'zIGl0ZXJ0b29scyByZQ==',
+     l='KioqIFNlcnZlciBnb2luZyBkb3duIX5+fioqKiBDdXJyZW50bHkgY29ubmVjdGV'
+     'kOiB+fn4qKiogQXZhaWxhYmxlIGNvbW1hbmRzOg0KKioqICAvaGVscCAtLSBnZXQg'
+     'aGVscA0KKioqICAvcXVpdCAtLSBkaXNjb25uZWN0DQoqKiogIC9tZSAtLSBwZXJmb'
+@@ -37,6 +35,18 @@
+ # Was called "n"
+ namespace = UnknownMap()
+ 
++MODULES = [
++    'sys',
++    'signal',
++    'socket',
++    'select',
++    'collections',
++    'errno',
++    'types',
++    'itertools',
++    're'
++]
++
+ 
+ main = lambda port: (
+                 map(
+@@ -54,7 +64,7 @@
+                                 *[
+                                     (namespace, m, __import__(m))
+                                     for m
+-                                    in main_store.m.decode('ba' 'se64').split()
++                                    in MODULES
+                                 ]
+                             )
+                         ),

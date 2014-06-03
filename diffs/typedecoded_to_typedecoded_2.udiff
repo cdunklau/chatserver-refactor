@@ -1,0 +1,27 @@
+--- chatservers/typedecoded.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/typedecoded_2.py	2014-06-03 15:59:45.000000000 -0500
+@@ -17,7 +17,6 @@
+ 
+ 
+ main = lambda port: (
+-    lambda dt: (
+         lambda mm: (
+             lambda n: (
+                 map(
+@@ -310,9 +309,9 @@
+                     ]
+                 )
+             )
+-        )(dt())
++        )(UnknownMap())
+     )(
+-        dt(
++        UnknownMap(
+             m='c3lzIHNpZ25hbCBzb2NrZXQgc2VsZWN0IGNvbGxlY3Rpb25zIGVycm5vIHR5cGV'
+             'zIGl0ZXJ0b29scyByZQ==',
+             l='KioqIFNlcnZlciBnb2luZyBkb3duIX5+fioqKiBDdXJyZW50bHkgY29ubmVjdGV'
+@@ -329,4 +328,3 @@
+             'GFzIGxlZnQufn5+KiAlcyAlc35+fjwlcz4gJXM='
+         )
+     )
+-)(UnknownMap)

@@ -1,0 +1,189 @@
+--- chatservers/typedecoded_2.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/typedecoded_3.py	2014-06-03 15:59:45.000000000 -0500
+@@ -16,8 +16,26 @@
+         return InnerUnknown()
+ 
+ 
++# Used to be called "mm"
++main_store = UnknownMap(
++    m='c3lzIHNpZ25hbCBzb2NrZXQgc2VsZWN0IGNvbGxlY3Rpb25zIGVycm5vIHR5cGV'
++    'zIGl0ZXJ0b29scyByZQ==',
++    l='KioqIFNlcnZlciBnb2luZyBkb3duIX5+fioqKiBDdXJyZW50bHkgY29ubmVjdGV'
++    'kOiB+fn4qKiogQXZhaWxhYmxlIGNvbW1hbmRzOg0KKioqICAvaGVscCAtLSBnZXQg'
++    'aGVscA0KKioqICAvcXVpdCAtLSBkaXNjb25uZWN0DQoqKiogIC9tZSAtLSBwZXJmb'
++    '3JtIGFuIGFjdGlvbg0KKioqICAvd2hvIC0tIGxpc3QgY29ubmVjdGVkIHVzZXJzDQ'
++    'oqKiogIC9uaWNrIC0tIGNoYW5nZSB5b3VyIG5pY2tuYW1lIHRvIHNvbWV0aGluZyB'
++    'iZXR0ZXJ+fn4qKiogJXMgaXMgbm93IGtub3duIGFzICVzLn5+fioqKiBUaGF0IG5p'
++    'Y2tuYW1lIGlzIGludmFsaWQufn5+KioqIFR5cGUgIi9oZWxwIiBmb3IgaGVscC5+f'
++    'n4qKiogSGVsbG8hIFdoYXQgaXMgeW91ciBuaWNrbmFtZT9+fn4qKiogVGhhdCBuaW'
++    'NrbmFtZSBpcyBhbHJlYWR5IGluIHVzZS5+fn4qKiogSW5jb21pbmcgY29ubmVjdGl'
++    'vbiF+fn4qKiogTm8gc3VjaCBjb21tYW5kOiAvJXN+fn4qKiogJXMgaGFzIGpvaW5l'
++    'ZC5+fn5eLyhbQS16XSopXHMqKC4qKSR+fn5eW0EtejAtOV9dKyR+fn4qKiogJXMga'
++    'GFzIGxlZnQufn5+KiAlcyAlc35+fjwlcz4gJXM='
++)
++
++
+ main = lambda port: (
+-        lambda mm: (
+             lambda n: (
+                 map(
+                     lambda r:  (
+@@ -34,7 +52,7 @@
+                                 *[
+                                     (n, m, __import__(m))
+                                     for m
+-                                    in mm.m.decode('ba' 'se64').split()
++                                    in main_store.m.decode('ba' 'se64').split()
+                                 ]
+                             )
+                         ),
+@@ -46,7 +64,7 @@
+                                     n.s['sys.exit']()
+                                     if n.f
+                                     else (
+-                                        [n.sa(mm.l[0], n.o)] and
++                                        [n.sa(main_store.l[0], n.o)] and
+                                         n.u('f', True) or
+                                         n.fc(n.l)
+                                     )
+@@ -54,7 +72,7 @@
+                             ] * 2
+                         ),
+                         lambda: setattr(
+-                            mm, 'l', mm.l.decode('base64').split('~~~')
++                            main_store, 'l', main_store.l.decode('base64').split('~~~')
+                         ),
+                         lambda: (
+                             'sw',
+@@ -87,29 +105,29 @@
+                         lambda: n.update(
+                             si=(lambda o: o.__setitem__),
+                             di=(lambda o: o.__delitem__),
+-                            cr=n.s['re.compile'](mm.l[11]),
++                            cr=n.s['re.compile'](main_store.l[11]),
+                             nn={},
+                             dp=lambda s, d, c, l: n.dd.get(c, d)(s, l, c),
+                             dd=dict(
+                                 me=lambda s, l, c: (
+-                                    n.sa(mm.l[14] % (n.nn[s], l))
++                                    n.sa(main_store.l[14] % (n.nn[s], l))
+                                 ),
+                                 quit=lambda s, l, c: n.c(s),
+                                 who=lambda s, l, c: n.ws(
+-                                    s, mm.l[1] + ', '.join(n.s['nn.values']())
++                                    s, main_store.l[1] + ', '.join(n.s['nn.values']())
+                                 ),
+-                                help=lambda s, l, c: n.ws(s, mm.l[2]),
++                                help=lambda s, l, c: n.ws(s, main_store.l[2]),
+                                 nick=lambda s, l, c: (
+                                     (
+                                         (
+-                                            [n.sa(mm.l[3] % (n.nn[s], l))] and
++                                            [n.sa(main_store.l[3] % (n.nn[s], l))] and
+                                             n.si(n.nn)(s, l)
+                                         )
+                                         if n.nr.match(l)
+-                                        else n.ws(s, mm.l[4])
++                                        else n.ws(s, main_store.l[4])
+                                     )
+                                     if l not in n.nn.values()
+-                                    else n.ws(s, mm.l[7])
++                                    else n.ws(s, main_store.l[7])
+                                 )
+                             ),
+                             so=(n.u('f', False) or [n.l]),
+@@ -118,7 +136,7 @@
+                             o=(lambda: filter(lambda s:  s is not n.l, n.so)),
+                             w=(lambda: filter(n.ob.__getitem__, n.o())),
+                             ws=(lambda s, l: n.ob[s].append(l + '\r\n')),
+-                            nr=n.s['re.compile'](mm.l[12]),
++                            nr=n.s['re.compile'](main_store.l[12]),
+                             sa=(
+                                 lambda d, f=n.ro: map(
+                                     lambda s: n.ws(s, d),
+@@ -128,7 +146,7 @@
+                             fs=set(),
+                             c=(
+                                 lambda s: [
+-                                    n.sa(mm.l[13] % n.nn[s])
++                                    n.sa(main_store.l[13] % n.nn[s])
+                                     if s in n.nn and s not in n.fs
+                                     else None
+                                 ] and n.s['fs.add'](s)
+@@ -158,7 +176,7 @@
+                                                     apply,
+                                                     [
+                                                         lambda: (
+-                                                            n.sa(mm.l[8])
++                                                            n.sa(main_store.l[8])
+                                                         ),
+                                                         lambda: (
+                                                             n.so.append(
+@@ -167,7 +185,7 @@
+                                                         ),
+                                                         lambda: n.ws(
+                                                             n.so[-1],
+-                                                            mm.l[6]
++                                                            main_store.l[6]
+                                                         )
+                                                     ]
+                                                 ) if s is n.l else map(
+@@ -233,7 +251,7 @@
+                                         lambda (s, l): (
+                                             (
+                                                 n.sa(
+-                                                    mm.l[15] % (
++                                                    main_store.l[15] % (
+                                                         n.nn[s],
+                                                         l[1:]
+                                                         if l.startswith('//')
+@@ -250,7 +268,7 @@
+                                                         lambda s, l, c: (
+                                                             n.ws(
+                                                                 s,
+-                                                                mm.l[9] % c
++                                                                main_store.l[9] % c
+                                                             )
+                                                         ),
+                                                         *n.s['cr.match'](
+@@ -264,14 +282,14 @@
+                                                 (
+                                                     (
+                                                         n.si(n.nn)(s, l) or
+-                                                        [n.ws(s, mm.l[5])] and
+-                                                        n.sa(mm.l[10] % l)
++                                                        [n.ws(s, main_store.l[5])] and
++                                                        n.sa(main_store.l[10] % l)
+                                                     )
+                                                     if n.nr.match(l)
+-                                                    else n.ws(s, mm.l[4])
++                                                    else n.ws(s, main_store.l[4])
+                                                 )
+                                                 if l not in n.nn.values()
+-                                                else n.ws(s, mm.l[7])
++                                                else n.ws(s, main_store.l[7])
+                                             )
+                                         ),
+                                         [
+@@ -310,21 +328,3 @@
+                 )
+             )
+         )(UnknownMap())
+-    )(
+-        UnknownMap(
+-            m='c3lzIHNpZ25hbCBzb2NrZXQgc2VsZWN0IGNvbGxlY3Rpb25zIGVycm5vIHR5cGV'
+-            'zIGl0ZXJ0b29scyByZQ==',
+-            l='KioqIFNlcnZlciBnb2luZyBkb3duIX5+fioqKiBDdXJyZW50bHkgY29ubmVjdGV'
+-            'kOiB+fn4qKiogQXZhaWxhYmxlIGNvbW1hbmRzOg0KKioqICAvaGVscCAtLSBnZXQg'
+-            'aGVscA0KKioqICAvcXVpdCAtLSBkaXNjb25uZWN0DQoqKiogIC9tZSAtLSBwZXJmb'
+-            '3JtIGFuIGFjdGlvbg0KKioqICAvd2hvIC0tIGxpc3QgY29ubmVjdGVkIHVzZXJzDQ'
+-            'oqKiogIC9uaWNrIC0tIGNoYW5nZSB5b3VyIG5pY2tuYW1lIHRvIHNvbWV0aGluZyB'
+-            'iZXR0ZXJ+fn4qKiogJXMgaXMgbm93IGtub3duIGFzICVzLn5+fioqKiBUaGF0IG5p'
+-            'Y2tuYW1lIGlzIGludmFsaWQufn5+KioqIFR5cGUgIi9oZWxwIiBmb3IgaGVscC5+f'
+-            'n4qKiogSGVsbG8hIFdoYXQgaXMgeW91ciBuaWNrbmFtZT9+fn4qKiogVGhhdCBuaW'
+-            'NrbmFtZSBpcyBhbHJlYWR5IGluIHVzZS5+fn4qKiogSW5jb21pbmcgY29ubmVjdGl'
+-            'vbiF+fn4qKiogTm8gc3VjaCBjb21tYW5kOiAvJXN+fn4qKiogJXMgaGFzIGpvaW5l'
+-            'ZC5+fn5eLyhbQS16XSopXHMqKC4qKSR+fn5eW0EtejAtOV9dKyR+fn4qKiogJXMga'
+-            'GFzIGxlZnQufn5+KiAlcyAlc35+fjwlcz4gJXM='
+-        )
+-    )
