@@ -3,13 +3,13 @@ Functional tests for chatserver refactor.
 
 Run it with trial, with the order=toptobottom option::
 
-    trial --order=toptobottom test_chatserver
+    trial test_chatserver
 
 Assumes chatserver is running on localhost, port 6667. To specify the
-name of the chatserver module at runtime::
+name of the chatserver module at runtime (from inside the chatservers
+directory)::
 
-    python -c 'import sys; __import__(sys.argv[1][:-3]).main(6667)' \
-        chatservers/custom.py
+    python -c 'import sys; __import__(sys.argv[1][:-3]).main(6667)' custom.py
 
 """
 import re
