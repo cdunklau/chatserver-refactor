@@ -1,0 +1,176 @@
+--- chatservers/replace_main_store_2.py	2014-06-03 15:59:45.000000000 -0500
++++ chatservers/replace_main_store_3.py	2014-06-04 04:19:13.000000000 -0500
+@@ -31,31 +31,29 @@
+     're'
+ ]
+ 
+-MESSAGES_ETC = [
+-    '*** Server going down!',
+-    '*** Currently connected: ',
+-    (
+-        '*** Available commands:\r\n'
+-        '***  /help -- get help\r\n'
+-        '***  /quit -- disconnect\r\n'
+-        '***  /me -- perform an action\r\n'
+-        '***  /who -- list connected users\r\n'
+-        '***  /nick -- change your nickname to something better'
+-    ),
+-    '*** %s is now known as %s.',
+-    '*** That nickname is invalid.',
+-    '*** Type "/help" for help.',
+-    '*** Hello! What is your nickname?',
+-    '*** That nickname is already in use.',
+-    '*** Incoming connection!',
+-    '*** No such command: /%s',
+-    '*** %s has joined.',
+-    '^/([A-z]*)\\s*(.*)$',
+-    '^[A-z0-9_]+$',
+-    '*** %s has left.',
+-    '* %s %s',
+-    '<%s> %s'
+-]
++SERVER_EXIT_MESSAGE = '*** Server going down!'
++WHO_MESSAGE_PREFIX = '*** Currently connected: '
++HELP_RESPONSE = (
++    '*** Available commands:\r\n'
++    '***  /help -- get help\r\n'
++    '***  /quit -- disconnect\r\n'
++    '***  /me -- perform an action\r\n'
++    '***  /who -- list connected users\r\n'
++    '***  /nick -- change your nickname to something better'
++)
++NICK_RESPONSE_FORMAT = '*** %s is now known as %s.'
++NICK_RESPONSE_ERROR = '*** That nickname is invalid.'
++HELP_MESSAGE = '*** Type "/help" for help.'
++GREETING_PROMPT = '*** Hello! What is your nickname?'
++NICK_NONUNIQUE_ERROR = '*** That nickname is already in use.'
++INCOMING_MESSAGE = '*** Incoming connection!'
++COMMAND_ERROR_FORMAT = '*** No such command: /%s'
++JOIN_MESSAGE_FORMAT = '*** %s has joined.'
++COMMAND_PATTERN = '^/([A-z]*)\\s*(.*)$'
++WORD_PATTERN = '^[A-z0-9_]+$'
++PART_MESSAGE_FORMAT = '*** %s has left.'
++ACTION_MESSAGE_FORMAT = '* %s %s'
++CHAT_MESSAGE_FORMAT = '<%s> %s'
+ 
+ main = lambda port: (
+                 map(
+@@ -85,7 +83,7 @@
+                                     namespace.s['sys.exit']()
+                                     if namespace.f
+                                     else (
+-                                        [namespace.sa(MESSAGES_ETC[0], namespace.o)] and
++                                        [namespace.sa(SERVER_EXIT_MESSAGE, namespace.o)] and
+                                         namespace.u('f', True) or
+                                         namespace.fc(namespace.l)
+                                     )
+@@ -123,29 +121,29 @@
+                         lambda: namespace.update(
+                             si=(lambda o: o.__setitem__),
+                             di=(lambda o: o.__delitem__),
+-                            cr=namespace.s['re.compile'](MESSAGES_ETC[11]),
++                            cr=namespace.s['re.compile'](COMMAND_PATTERN),
+                             nn={},
+                             dp=lambda s, d, c, l: namespace.dd.get(c, d)(s, l, c),
+                             dd=dict(
+                                 me=lambda s, l, c: (
+-                                    namespace.sa(MESSAGES_ETC[14] % (namespace.nn[s], l))
++                                    namespace.sa(ACTION_MESSAGE_FORMAT % (namespace.nn[s], l))
+                                 ),
+                                 quit=lambda s, l, c: namespace.c(s),
+                                 who=lambda s, l, c: namespace.ws(
+-                                    s, MESSAGES_ETC[1] + ', '.join(namespace.s['nn.values']())
++                                    s, WHO_MESSAGE_PREFIX + ', '.join(namespace.s['nn.values']())
+                                 ),
+-                                help=lambda s, l, c: namespace.ws(s, MESSAGES_ETC[2]),
++                                help=lambda s, l, c: namespace.ws(s, HELP_RESPONSE),
+                                 nick=lambda s, l, c: (
+                                     (
+                                         (
+-                                            [namespace.sa(MESSAGES_ETC[3] % (namespace.nn[s], l))] and
++                                            [namespace.sa(NICK_RESPONSE_FORMAT % (namespace.nn[s], l))] and
+                                             namespace.si(namespace.nn)(s, l)
+                                         )
+                                         if namespace.nr.match(l)
+-                                        else namespace.ws(s, MESSAGES_ETC[4])
++                                        else namespace.ws(s, NICK_RESPONSE_ERROR)
+                                     )
+                                     if l not in namespace.nn.values()
+-                                    else namespace.ws(s, MESSAGES_ETC[7])
++                                    else namespace.ws(s, NICK_NONUNIQUE_ERROR)
+                                 )
+                             ),
+                             so=(namespace.u('f', False) or [namespace.l]),
+@@ -154,7 +152,7 @@
+                             o=(lambda: filter(lambda s:  s is not namespace.l, namespace.so)),
+                             w=(lambda: filter(namespace.ob.__getitem__, namespace.o())),
+                             ws=(lambda s, l: namespace.ob[s].append(l + '\r\n')),
+-                            nr=namespace.s['re.compile'](MESSAGES_ETC[12]),
++                            nr=namespace.s['re.compile'](WORD_PATTERN),
+                             sa=(
+                                 lambda d, f=namespace.ro: map(
+                                     lambda s: namespace.ws(s, d),
+@@ -164,7 +162,7 @@
+                             fs=set(),
+                             c=(
+                                 lambda s: [
+-                                    namespace.sa(MESSAGES_ETC[13] % namespace.nn[s])
++                                    namespace.sa(PART_MESSAGE_FORMAT % namespace.nn[s])
+                                     if s in namespace.nn and s not in namespace.fs
+                                     else None
+                                 ] and namespace.s['fs.add'](s)
+@@ -194,7 +192,7 @@
+                                                     apply,
+                                                     [
+                                                         lambda: (
+-                                                            namespace.sa(MESSAGES_ETC[8])
++                                                            namespace.sa(INCOMING_MESSAGE)
+                                                         ),
+                                                         lambda: (
+                                                             namespace.so.append(
+@@ -203,7 +201,7 @@
+                                                         ),
+                                                         lambda: namespace.ws(
+                                                             namespace.so[-1],
+-                                                            MESSAGES_ETC[6]
++                                                            GREETING_PROMPT
+                                                         )
+                                                     ]
+                                                 ) if s is namespace.l else map(
+@@ -269,7 +267,7 @@
+                                         lambda (s, l): (
+                                             (
+                                                 namespace.sa(
+-                                                    MESSAGES_ETC[15] % (
++                                                    CHAT_MESSAGE_FORMAT % (
+                                                         namespace.nn[s],
+                                                         l[1:]
+                                                         if l.startswith('//')
+@@ -286,7 +284,7 @@
+                                                         lambda s, l, c: (
+                                                             namespace.ws(
+                                                                 s,
+-                                                                MESSAGES_ETC[9] % c
++                                                                COMMAND_ERROR_FORMAT % c
+                                                             )
+                                                         ),
+                                                         *namespace.s['cr.match'](
+@@ -300,14 +298,14 @@
+                                                 (
+                                                     (
+                                                         namespace.si(namespace.nn)(s, l) or
+-                                                        [namespace.ws(s, MESSAGES_ETC[5])] and
+-                                                        namespace.sa(MESSAGES_ETC[10] % l)
++                                                        [namespace.ws(s, HELP_MESSAGE)] and
++                                                        namespace.sa(JOIN_MESSAGE_FORMAT % l)
+                                                     )
+                                                     if namespace.nr.match(l)
+-                                                    else namespace.ws(s, MESSAGES_ETC[4])
++                                                    else namespace.ws(s, NICK_RESPONSE_ERROR)
+                                                 )
+                                                 if l not in namespace.nn.values()
+-                                                else namespace.ws(s, MESSAGES_ETC[7])
++                                                else namespace.ws(s, NICK_NONUNIQUE_ERROR)
+                                             )
+                                         ),
+                                         [

@@ -12,6 +12,7 @@ TODIFF_NAMES = [
     'typedecoded_4',
     'replace_main_store',
     'replace_main_store_2',
+    'replace_main_store_3',
 ]
 OUTPUT_EXT = 'udiff'
 

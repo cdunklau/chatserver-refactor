@@ -9,7 +9,7 @@ Assumes chatserver is running on localhost, port 6667. To specify the
 name of the chatserver module at runtime::
 
     python -c 'import sys; __import__(sys.argv[1][:-3]).main(6667)' \
-        chatserver_custom.py
+        chatservers/custom.py
 
 """
 import re
@@ -20,6 +20,7 @@ from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.protocols.basic import LineReceiver
 from twisted.trial.unittest import TestCase
+from twisted.python import log
 
 
 # Example session
@@ -247,6 +248,56 @@ class ChatserverTestCase(TestCase):
         )
         return alice_deferred
 
+    def test_error_nonunique_nick_on_login(self):
+        notdebbie_messages = [
+            Rx('*** Hello! What is your nickname?'),
+            Tx('debbie'),
+            Rx('*** That nickname is already in use.'),
+            Tx('notdebbie'),
+            Rx('*** Type "/help" for help.'),
+            Rx('*** notdebbie has joined.'),
+            Tx('/quit'),
+            Rx('*** notdebbie has left.')
+        ]
+        debbie_messages = sessionMessages(
+            'debbie',
+            [
+                Rx('*** Incoming connection!'),
+                Rx('*** notdebbie has joined.'),
+                Rx('*** notdebbie has left.'),
+            ]
+        )
+        debbie_deferred = self.deferExpectedMessages(debbie_messages, 2.0)
+        reactor.callLater(
+            0.5,
+            lambda: debbie_deferred.chainDeferred(
+                self.deferExpectedMessages(notdebbie_messages)
+            )
+        )
+        return debbie_deferred
+
+    def test_error_nonunique_nick(self):
+        wannabeevan_messages = sessionMessages(
+            'wannabeevan',
+            [Tx('/nick evan'), Rx('*** That nickname is already in use.')]
+        )
+        evan_messages = sessionMessages(
+            'evan',
+            [
+                Rx('*** Incoming connection!'),
+                Rx('*** wannabeevan has joined.'),
+                Rx('*** wannabeevan has left.'),
+            ]
+        )
+        evan_deferred = self.deferExpectedMessages(evan_messages, 1.0)
+        reactor.callLater(
+            0.2,
+            lambda: evan_deferred.chainDeferred(
+                self.deferExpectedMessages(wannabeevan_messages)
+            )
+        )
+        return evan_deferred
+
 
 # Message constructs
 class Message(namedtuple('BaseMessage', ['message'])):
@@ -414,12 +465,17 @@ class StateMachineClient(LineReceiver):
         self.stateMachine.assertFinished(self.testInstance)
         self.deferred.callback(None)
 
+    def sendLine(self, line):
+        #log.err('Sending line: %r' % (line,))
+        LineReceiver.sendLine(self, line)
+
     def lineReceived(self, line):
         """
         Tell the state machine about the received message, and flush
         any messages waiting to be sent.
 
         """
+        #log.err('Received line: %r' % (line,))
         self.stateMachine.recordReceived(line, self.testInstance)
         self.stateMachine.transmitNext(self)
 
