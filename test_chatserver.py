@@ -19,6 +19,7 @@ from collections import namedtuple
 from twisted.internet import reactor, defer
 from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import TCP4ClientEndpoint
+from twisted.internet.task import deferLater
 from twisted.protocols.basic import LineReceiver
 from twisted.trial.unittest import TestCase
 from twisted.python import log
@@ -97,7 +98,8 @@ class ChatserverTestCase(TestCase):
             # within the protocol).
             @d.addBoth
             def cbCancelTimeout(passthrough):
-                delayed.cancel()
+                if delayed.active():
+                    delayed.cancel()
                 return passthrough
 
             # Returning the state machine's Deferred from this callback
@@ -234,20 +236,12 @@ class ChatserverTestCase(TestCase):
         # apart (alice, bob, then charlie), then charlie says two things,
         # alice responds, then bob responds, then they exit in the opposite
         # order they originally connected.
-        alice_deferred = self.deferExpectedMessages(alice_messages, 2.0)
-        reactor.callLater(
-            0.2,
-            lambda: alice_deferred.chainDeferred(
-                self.deferExpectedMessages(bob_messages, 1.0)
-            )
-        )
-        reactor.callLater(
-            0.4,
-            lambda: alice_deferred.chainDeferred(
-                self.deferExpectedMessages(charlie_messages)
-            )
-        )
-        return alice_deferred
+        aliceDeferred = self.deferExpectedMessages(alice_messages, 2.0)
+        bobDeferredLater = deferLater(reactor, 0.2, self.deferExpectedMessages, bob_messages, 2.0)
+        aliceDeferred.addCallback(lambda _: bobDeferredLater)
+        charlieDeferredLater = deferLater(reactor, 0.4, self.deferExpectedMessages, charlie_messages, 2.0)
+        aliceDeferred.addCallback(lambda _: charlieDeferredLater)
+        return aliceDeferred
 
     def test_error_nonunique_nick_on_login(self):
         notdebbie_messages = [
@@ -268,14 +262,10 @@ class ChatserverTestCase(TestCase):
                 Rx('*** notdebbie has left.'),
             ]
         )
-        debbie_deferred = self.deferExpectedMessages(debbie_messages, 2.0)
-        reactor.callLater(
-            0.5,
-            lambda: debbie_deferred.chainDeferred(
-                self.deferExpectedMessages(notdebbie_messages)
-            )
-        )
-        return debbie_deferred
+        debbieDeferred = self.deferExpectedMessages(debbie_messages, 2.0)
+        notdebbieDeferredLater = deferLater(reactor, 0.2, self.deferExpectedMessages, notdebbie_messages)
+        debbieDeferred.addCallback(lambda _: notdebbieDeferredLater)
+        return debbieDeferred
 
     def test_error_nonunique_nick(self):
         wannabeevan_messages = sessionMessages(
@@ -290,14 +280,10 @@ class ChatserverTestCase(TestCase):
                 Rx('*** wannabeevan has left.'),
             ]
         )
-        evan_deferred = self.deferExpectedMessages(evan_messages, 1.0)
-        reactor.callLater(
-            0.2,
-            lambda: evan_deferred.chainDeferred(
-                self.deferExpectedMessages(wannabeevan_messages)
-            )
-        )
-        return evan_deferred
+        evanDeferred = self.deferExpectedMessages(evan_messages, 1.0)
+        wannabeevanDeferredLater = deferLater(reactor, 0.2, self.deferExpectedMessages, wannabeevan_messages)
+        evanDeferred.addCallback(lambda _: wannabeevanDeferredLater)
+        return evanDeferred
 
 
 # Message constructs
@@ -466,9 +452,9 @@ class StateMachineClient(LineReceiver):
         self.stateMachine.deferred.callback(None)
         self.stateMachine.deferred = None
 
-    def sendLine(self, line):
-        #log.err('Sending line: %r' % (line,))
-        LineReceiver.sendLine(self, line)
+    #def sendLine(self, line):
+    #    #log.err('Sending line: %r' % (line,))
+    #    LineReceiver.sendLine(self, line)
 
     def lineReceived(self, line):
         """
