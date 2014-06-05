@@ -13,6 +13,7 @@ name of the chatserver module at runtime::
 
 """
 import re
+import traceback
 from collections import namedtuple
 
 from twisted.internet import reactor, defer
@@ -99,9 +100,9 @@ class ChatserverTestCase(TestCase):
                 delayed.cancel()
                 return passthrough
 
-            # Returning the protocol's Deferred from this callback implicitly
-            # "chains" it onto the deferred from endpoint.connect...
-            return proto.deferred
+            # Returning the state machine's Deferred from this callback
+            # implicitly "chains" it onto the deferred from endpoint.connect...
+            return proto.stateMachine.deferred
 
         # ...so I can return the Deferred from endpoint.connect directly, and
         # trial will wait until it fires to record success or failure.
@@ -438,8 +439,8 @@ class StateMachineClient(LineReceiver):
     Simple ``LineReceiver`` implementation driven by a
     ``SendReceiveStateAsserter`` state machine.
 
-    The ``deferred`` attribute chains the state machine's deferred,
-    and will fire when the protocol loses connection to the server.
+    The state machine's deferred will be fired when the protocol
+    loses connection.
 
     The ``testInstance`` attribute is the TestCase instance used
     by the state machine to record failures.
@@ -447,10 +448,8 @@ class StateMachineClient(LineReceiver):
     """
     def __init__(self, messages, testInstance):
         """``messages`` is passed directly to the state machine."""
-        self.deferred = defer.Deferred()
         self.testInstance = testInstance
         self.stateMachine = SendReceiveStateAsserter(messages)
-        self.deferred.chainDeferred(self.stateMachine.deferred)
 
     def connectionMade(self):
         """Flush any messages waiting to be sent."""
@@ -458,12 +457,14 @@ class StateMachineClient(LineReceiver):
 
     def connectionLost(self, reason):
         """
-        Call the final assertion method, and fire the deferred (which
-        in turn fires the state machine's deferred)
+        Call the final assertion method, and fire the state machine's
+        deferred.
 
         """
+        #traceback.print_stack()
         self.stateMachine.assertFinished(self.testInstance)
-        self.deferred.callback(None)
+        self.stateMachine.deferred.callback(None)
+        self.stateMachine.deferred = None
 
     def sendLine(self, line):
         #log.err('Sending line: %r' % (line,))
