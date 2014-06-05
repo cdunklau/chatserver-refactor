@@ -13,7 +13,6 @@ name of the chatserver module at runtime::
 
 """
 import re
-import traceback
 from collections import namedtuple
 
 from twisted.internet import reactor, defer
@@ -22,7 +21,6 @@ from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.task import deferLater
 from twisted.protocols.basic import LineReceiver
 from twisted.trial.unittest import TestCase
-from twisted.python import log
 
 
 # Example session
@@ -191,7 +189,7 @@ class ChatserverTestCase(TestCase):
         return self.deferExpectedMessages(messages)
 
     def test_chat_broadcast_to_all_users(self):
-        alice_messages = sessionMessages(
+        aliceMessages = sessionMessages(
             'alice',
             [
                 Rx('*** Incoming connection!'),
@@ -207,7 +205,7 @@ class ChatserverTestCase(TestCase):
                 Rx('*** bob has left.'),
             ]
         )
-        bob_messages = sessionMessages(
+        bobMessages = sessionMessages(
             'bob',
             [
                 Rx('*** Incoming connection!'),
@@ -220,7 +218,7 @@ class ChatserverTestCase(TestCase):
                 Rx('*** charlie has left.'),
             ]
         )
-        charlie_messages = sessionMessages(
+        charlieMessages = sessionMessages(
             'charlie',
             [
                 Tx('Hi everyone!'),
@@ -236,15 +234,17 @@ class ChatserverTestCase(TestCase):
         # apart (alice, bob, then charlie), then charlie says two things,
         # alice responds, then bob responds, then they exit in the opposite
         # order they originally connected.
-        aliceDeferred = self.deferExpectedMessages(alice_messages, 2.0)
-        bobDeferredLater = deferLater(reactor, 0.2, self.deferExpectedMessages, bob_messages, 2.0)
+        aliceDeferred = self.deferExpectedMessages(aliceMessages, 2.0)
+        bobDeferredLater = deferLater(
+            reactor, 0.2, self.deferExpectedMessages, bobMessages, 2.0)
         aliceDeferred.addCallback(lambda _: bobDeferredLater)
-        charlieDeferredLater = deferLater(reactor, 0.4, self.deferExpectedMessages, charlie_messages, 2.0)
+        charlieDeferredLater = deferLater(
+            reactor, 0.4, self.deferExpectedMessages, charlieMessages, 2.0)
         aliceDeferred.addCallback(lambda _: charlieDeferredLater)
         return aliceDeferred
 
     def test_error_nonunique_nick_on_login(self):
-        notdebbie_messages = [
+        notdebbieMessages = [
             Rx('*** Hello! What is your nickname?'),
             Tx('debbie'),
             Rx('*** That nickname is already in use.'),
@@ -254,7 +254,7 @@ class ChatserverTestCase(TestCase):
             Tx('/quit'),
             Rx('*** notdebbie has left.')
         ]
-        debbie_messages = sessionMessages(
+        debbieMessages = sessionMessages(
             'debbie',
             [
                 Rx('*** Incoming connection!'),
@@ -262,17 +262,18 @@ class ChatserverTestCase(TestCase):
                 Rx('*** notdebbie has left.'),
             ]
         )
-        debbieDeferred = self.deferExpectedMessages(debbie_messages, 2.0)
-        notdebbieDeferredLater = deferLater(reactor, 0.2, self.deferExpectedMessages, notdebbie_messages)
+        debbieDeferred = self.deferExpectedMessages(debbieMessages, 2.0)
+        notdebbieDeferredLater = deferLater(
+            reactor, 0.2, self.deferExpectedMessages, notdebbieMessages)
         debbieDeferred.addCallback(lambda _: notdebbieDeferredLater)
         return debbieDeferred
 
     def test_error_nonunique_nick(self):
-        wannabeevan_messages = sessionMessages(
+        wannabeevanMessages = sessionMessages(
             'wannabeevan',
             [Tx('/nick evan'), Rx('*** That nickname is already in use.')]
         )
-        evan_messages = sessionMessages(
+        evanMessages = sessionMessages(
             'evan',
             [
                 Rx('*** Incoming connection!'),
@@ -280,8 +281,9 @@ class ChatserverTestCase(TestCase):
                 Rx('*** wannabeevan has left.'),
             ]
         )
-        evanDeferred = self.deferExpectedMessages(evan_messages, 1.0)
-        wannabeevanDeferredLater = deferLater(reactor, 0.2, self.deferExpectedMessages, wannabeevan_messages)
+        evanDeferred = self.deferExpectedMessages(evanMessages, 1.0)
+        wannabeevanDeferredLater = deferLater(
+            reactor, 0.2, self.deferExpectedMessages, wannabeevanMessages)
         evanDeferred.addCallback(lambda _: wannabeevanDeferredLater)
         return evanDeferred
 
@@ -447,14 +449,9 @@ class StateMachineClient(LineReceiver):
         deferred.
 
         """
-        #traceback.print_stack()
         self.stateMachine.assertFinished(self.testInstance)
         self.stateMachine.deferred.callback(None)
         self.stateMachine.deferred = None
-
-    #def sendLine(self, line):
-    #    #log.err('Sending line: %r' % (line,))
-    #    LineReceiver.sendLine(self, line)
 
     def lineReceived(self, line):
         """
@@ -462,7 +459,6 @@ class StateMachineClient(LineReceiver):
         any messages waiting to be sent.
 
         """
-        #log.err('Received line: %r' % (line,))
         self.stateMachine.recordReceived(line, self.testInstance)
         self.stateMachine.transmitNext(self)
 
