@@ -1,0 +1,24 @@
+--- chatservers/normal_main_function.py	2014-06-06 04:25:56.000000000 -0500
++++ chatservers/normal_main_function_2.py	2014-06-06 04:42:38.000000000 -0500
+@@ -56,7 +56,8 @@
+ CHAT_MESSAGE_FORMAT = '<%s> %s'
+ 
+ 
+-functions_to_run = [
++def main(port):
++    functions_to_run = [
+                         lambda: map(
+                             setattr,
+                             *zip(
+@@ -332,10 +333,7 @@
+                             iter(lambda: bool(namespace.so), False)
+                         ),
+                         lambda: namespace.s['l.' 'close']()
+-]
+-
+-
+-def main(port):
++    ]
+     for func in functions_to_run:
+         result = func()
+         if type(result) is tuple and len(result) == 2:

@@ -13,6 +13,8 @@ TODIFF_NAMES = [
     'replace_main_store',
     'replace_main_store_2',
     'replace_main_store_3',
+    'normal_main_function',
+    'normal_main_function_2',
 ]
 OUTPUT_EXT = 'udiff'
 

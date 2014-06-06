@@ -1,0 +1,37 @@
+--- chatservers/replace_main_store_3.py	2014-06-04 04:19:13.000000000 -0500
++++ chatservers/normal_main_function.py	2014-06-06 04:25:56.000000000 -0500
+@@ -55,16 +55,8 @@
+ ACTION_MESSAGE_FORMAT = '* %s %s'
+ CHAT_MESSAGE_FORMAT = '<%s> %s'
+ 
+-main = lambda port: (
+-                map(
+-                    lambda r:  (
+-                        lambda rr: (
+-                            setattr(namespace, *rr)
+-                            if (type(rr) is tuple and len(rr) == 2)
+-                            else None
+-                        )
+-                    )(r()),
+-                    [
++
++functions_to_run = [
+                         lambda: map(
+                             setattr,
+                             *zip(
+@@ -340,6 +332,12 @@
+                             iter(lambda: bool(namespace.so), False)
+                         ),
+                         lambda: namespace.s['l.' 'close']()
+-                    ]
+-                )
+-            )
++]
++
++
++def main(port):
++    for func in functions_to_run:
++        result = func()
++        if type(result) is tuple and len(result) == 2:
++            name, value = result  # names for setattr args
++            setattr(namespace, name, value)
