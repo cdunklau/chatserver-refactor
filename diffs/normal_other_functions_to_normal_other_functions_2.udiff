@@ -1,0 +1,42 @@
+--- chatservers/normal_other_functions.py	2014-06-07 09:03:49.000000000 -0500
++++ chatservers/normal_other_functions_2.py	2014-06-07 10:19:53.000000000 -0500
+@@ -59,24 +59,24 @@
+     for module_name in MODULES:
+         setattr(namespace, module_name, __import__(module_name))
+ 
++def add_signal_handlers():
++    signal_signal = namespace.s['signal.signal']
++
++    def signal_handler(s, f):
++        if namespace.f:
++            namespace.s['sys.exit']()
++        else:
++            namespace.sa(SERVER_EXIT_MESSAGE, namespace.o)
++            if not namespace.u('f', True):
++                namespace.fc(namespace.l)
++
++    signal_signal(namespace.s['signal.SIGINT'], signal_handler)
++    signal_signal(namespace.s['signal.SIGTERM'], signal_handler)
++
+ def main(port):
+     functions_to_run = [
+         import_to_namespace,
+-        lambda: map(
+-            namespace.s['signal.signal'],
+-            (namespace.s['signal.SIGINT'], namespace.s['signal.SIGTERM']),
+-            [
+-                lambda s, f: (
+-                    namespace.s['sys.exit']()
+-                    if namespace.f
+-                    else (
+-                        [namespace.sa(SERVER_EXIT_MESSAGE, namespace.o)] and
+-                        namespace.u('f', True) or
+-                        namespace.fc(namespace.l)
+-                    )
+-                )
+-            ] * 2
+-        ),
++        add_signal_handlers,
+         lambda: (
+             'sw',
+             namespace.s['types.Functio' 'nType'](

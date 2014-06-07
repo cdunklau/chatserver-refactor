@@ -1,0 +1,41 @@
+--- chatservers/normal_other_functions_2.py	2014-06-07 10:19:53.000000000 -0500
++++ chatservers/normal_other_functions_3.py	2014-06-07 11:00:37.000000000 -0500
+@@ -73,27 +73,22 @@
+     signal_signal(namespace.s['signal.SIGINT'], signal_handler)
+     signal_signal(namespace.s['signal.SIGTERM'], signal_handler)
+ 
++def do_select_routine():
++    try:
++        v = namespace.select.select(namespace.so, namespace.w(), [])
++    except namespace.select.error, e:
++        if e[0] != namespace.errno.EINTR:
++            raise
++    else:
++        namespace.u('sr', v)
++
+ def main(port):
++    namespace.sw = do_select_routine
++
+     functions_to_run = [
+         import_to_namespace,
+         add_signal_handlers,
+         lambda: (
+-            'sw',
+-            namespace.s['types.Functio' 'nType'](
+-                compile(
+-                    "try:\n"
+-                    "\tv = namespace.select.select(namespace.so, namespace.w(), [])\n"
+-                    "except namespace.select.error, e:\n"
+-                    "\tif e[0] != namespace.errno.EINTR: raise\n"
+-                    "else:\n"
+-                    "\tnamespace.u('sr', v)",
+-                    '',
+-                    'exec'
+-                ),
+-                dict(namespace=namespace, OSError=OSError)
+-            )
+-        ),
+-        lambda: (
+             'l',
+             namespace.s['socket.socket'](
+                 namespace.s['socket.AF_INET'],

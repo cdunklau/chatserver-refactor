@@ -1,5 +1,5 @@
 --- chatservers/normal_main_function.py	2014-06-06 04:25:56.000000000 -0500
-+++ chatservers/normal_main_function_2.py	2014-06-06 04:42:38.000000000 -0500
++++ chatservers/normal_main_function_2.py	2014-06-06 04:53:24.000000000 -0500
 @@ -56,7 +56,8 @@
  CHAT_MESSAGE_FORMAT = '<%s> %s'
  

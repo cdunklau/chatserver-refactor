@@ -1,0 +1,26 @@
+--- chatservers/reset_indent.py	2014-06-07 09:01:41.000000000 -0500
++++ chatservers/normal_other_functions.py	2014-06-07 09:03:49.000000000 -0500
+@@ -55,19 +55,13 @@
+ ACTION_MESSAGE_FORMAT = '* %s %s'
+ CHAT_MESSAGE_FORMAT = '<%s> %s'
+ 
++def import_to_namespace():
++    for module_name in MODULES:
++        setattr(namespace, module_name, __import__(module_name))
+ 
+ def main(port):
+     functions_to_run = [
+-        lambda: map(
+-            setattr,
+-            *zip(
+-                *[
+-                    (namespace, m, __import__(m))
+-                    for m
+-                    in MODULES
+-                ]
+-            )
+-        ),
++        import_to_namespace,
+         lambda: map(
+             namespace.s['signal.signal'],
+             (namespace.s['signal.SIGINT'], namespace.s['signal.SIGTERM']),
